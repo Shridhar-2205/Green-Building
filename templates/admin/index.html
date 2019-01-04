@@ -1,0 +1,452 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+{% if current_user.is_authenticated %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+      Dashboard 
+      <small>Control panel</small>
+  </h1>
+  <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="active">Dashboard</li>
+  </ol>
+</section>
+
+<section class="content">
+  <!-- Small boxes (Stat box) -->
+  <div class="row">
+    <div class="col-lg-3 col-xs-6">
+      <!-- small box -->
+      <div class="small-box bg-aqua">
+        <div class="inner">
+          <h3>{{arg1}}</h3>
+          <p>Total Nodes</p>
+      </div>
+      <div class="icon">
+          <i class="ion ion-bag"></i>
+      </div>
+      <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+  </div>
+</div>
+<!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-green">
+    <div class="inner">
+      <h3>{{arg2}}</h3>
+
+      <p>Active Nodes</p>
+  </div>
+  <div class="icon">
+      <i class="ion ion-stats-bars"></i>
+  </div>
+  <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+</div>
+<!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-yellow">
+    <div class="inner">
+      <h3>{{arg3}}</h3>
+
+      <p>Total Clusters</p>
+  </div>
+  <div class="icon">
+      <i class="ion ion-person-add"></i>
+  </div>
+  <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+</div>
+<!-- ./col -->
+<div class="col-lg-3 col-xs-6">
+  <!-- small box -->
+  <div class="small-box bg-red">
+    <div class="inner">
+      <h3>{{arg4}}</h3>
+
+      <p>No. Of Buildings</p>
+  </div>
+  <div class="icon">
+      <i class="ion ion-pie-graph"></i>
+  </div>
+  <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+</div>
+<!-- ./col -->
+</div>
+<!-- /.row -->
+<!-- Main row -->
+<div class="row">
+    <!-- Left col -->
+    <section class="col-lg-7 connectedSortable">
+      <!-- Custom tabs (Charts with tabs)-->
+      <div class="nav-tabs-custom">
+        <!-- Tabs within a box -->
+        <ul class="nav nav-tabs pull-right">
+          <li class="active"><a href="#revenue-chart" data-toggle="tab">Area</a></li>
+          <li><a href="#sales-chart" data-toggle="tab">Donut</a></li>
+          <li class="pull-left header"><i class="fa fa-inbox"></i> Usage</li>
+      </ul>
+      <div class="tab-content no-padding">
+          <!-- Morris chart - Sales -->
+          <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;"></div>
+          <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
+      </div>
+  </div>
+  <!-- /.nav-tabs-custom -->
+
+
+<!-- /.box (chat box) -->
+
+
+
+<!-- quick email widget -->
+
+
+</section>
+<!-- /.Left col -->
+<!-- right col (We are only adding the ID to make the widgets sortable)-->
+<section class="col-lg-5 connectedSortable">
+
+  <!-- Map box -->
+  <div class="box box-solid bg-light-blue-gradient">
+    <div class="box-header">
+      <!-- tools box -->
+      <div class="pull-right box-tools">
+        <button type="button" class="btn btn-primary btn-sm daterange pull-right" data-toggle="tooltip" title="Date range">
+          <i class="fa fa-calendar"></i></button>
+          <button type="button" class="btn btn-primary btn-sm pull-right" data-widget="collapse" data-toggle="tooltip" title="Collapse" style="margin-right: 5px;">
+              <i class="fa fa-minus"></i></button>
+          </div>
+          <!-- /. tools -->
+
+          <i class="fa fa-map-marker"></i>
+
+          <h3 class="box-title">
+            Clients
+
+        </h3>
+    </div>
+    <div class="box-body">
+      <div id="g-map" style="height: 250px; width: 100%;"></div>
+  </div>
+
+
+
+
+
+
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script>
+         var map;
+         var g_cluster_data;
+         function initMap() {
+           <!--create map-->
+           map = new google.maps.Map(document.getElementById('g-map'), {
+                 center: {lat: 37.3257, lng: -121.89},
+                 <!--TODO change the center coord-->
+                 zoom: 1,
+                 styles:[
+    {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#444444"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "all",
+        "stylers": [
+            {
+                "color": "#f2f2f2"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 45
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "color": "#3c8dbc"
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    }
+]
+               });
+
+         // Resize stuff...
+         google.maps.event.addDomListener(window, "resize", function() {
+           var center = map.getCenter();
+           google.maps.event.trigger(map, "resize");
+           map.setCenter(center);
+         });
+
+           <!--add building markers-->
+         {% for building in buildings %}
+               var infoWindow = new google.maps.InfoWindow();
+
+               var myLatLng = {lat: {{building.lat}}, lng: {{building.lng}}};
+               var marker = new google.maps.Marker({
+                   position: myLatLng,
+                   map: map,
+                   title: "{{building.name}}"
+               });
+               marker.content = '{{building.name}}'
+               marker.addListener('click', function() {
+                     infoWindow.open(map, marker);
+                     console.log("{{building.name}}")
+                   });
+
+               google.maps.event.addListener(marker, 'click', function () {
+                       infoWindow.setContent(this.content);
+                       infoWindow.open(this.getMap(), this);
+                   });
+               marker.setMap(map);
+         {% endfor %}
+         }
+
+
+      </script>
+
+
+
+
+
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQIL1DWVW3Ke8_Ddzx8xxkjeUlBCAS9PQ&callback=initMap"
+         async defer></script>
+  <!-- /.box-body-->
+  <div class="box-footer no-border">
+      <div class="row">
+        <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+          <div id="sparkline-1"></div>
+          <div class="knob-label">Visitors</div>
+      </div>
+      <!-- ./col -->
+      <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+          <div id="sparkline-2"></div>
+          <div class="knob-label">Online</div>
+      </div>
+      <!-- ./col -->
+      <div class="col-xs-4 text-center">
+          <div id="sparkline-3"></div>
+          <div class="knob-label">Exists</div>
+      </div>
+      <!-- ./col -->
+  </div>
+  <!-- /.row -->
+</div>
+</div>
+<!-- /.box -->
+
+
+
+
+<!-- solid sales graph -->
+<div class="box box-solid bg-teal-gradient">
+    <div class="box-header">
+      <i class="fa fa-th"></i>
+
+      <h3 class="box-title">Monitoring</h3>
+
+      <div class="box-tools pull-right">
+        <button type="button" class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i>
+        </button>
+        <button type="button" class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i>
+        </button>
+    </div>
+</div>
+<div class="box-body border-radius-none">
+  <div class="chart" id="line-chart" style="height: 250px;"></div>
+</div>
+<!-- /.box-body -->
+<div class="box-footer no-border">
+  <div class="row">
+    <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+      <input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60" data-fgColor="#39CCCC">
+
+      <div class="knob-label">Inactive</div>
+  </div>
+  <!-- ./col -->
+  <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+      <input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60" data-fgColor="#39CCCC">
+
+      <div class="knob-label">Active</div>
+  </div>
+  <!-- ./col -->
+  <div class="col-xs-4 text-center">
+      <input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60" data-fgColor="#39CCCC">
+
+      <div class="knob-label">Rate</div>
+  </div>
+  <!-- ./col -->
+</div>
+<!-- /.row -->
+</div>
+<!-- /.box-footer -->
+</div>
+<!-- /.box -->
+
+
+<!-- /.box -->
+
+</section>
+<!-- right col -->
+</div>
+<!-- /.row (main row) -->
+
+{% else %}
+<!DOCTYPE html>
+<html lang="en">
+<title>Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style>
+<body>
+
+<!-- Navbar -->
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-container w3-green w3-center" style="padding:128px 16px">
+  <h1 class="w3-margin w3-jumbo">Green Building</h1>
+  <p class="w3-xlarge">Save Energy On the Go</p>
+  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="window.location.href='{{ url_for('security.login')}}'">Login</button>
+  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="window.location.href='{{ url_for('security.register')}}'">Register</button>
+</header>
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-twothird">
+      <h1>Introduction</h1>
+      <h5 class="w3-padding-32">Green building is an energy efficient and highly sustainable structure which tracks the resources like light, water, AC, etc. using the IOT sensors. Under this project, we will be creating an IOT based cloud system to monitor the resource utilization over cloud for the components like lights, temperature, water, etc.
+</h5>
+
+
+    </div>
+
+    <div class="w3-third w3-center">
+    <img src="http://www.mgbc.org.my/wp-content/uploads/2018/04/mgbc-home-img.jpg" alt="W3Schools.com" style="width:300px;height:200px;">
+    </div>
+  </div>
+</div>
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-third w3-center">
+
+<img src="https://paladinengineers.com/wp-content/uploads/2017/10/green-building.jpg" alt="W3Schools.com" style="width:300px;height:300px;">
+
+    </div>
+
+    <div class="w3-twothird">
+      <h1>Applications</h1>
+      <h5 class="w3-padding-32">In a typical green building, each floor has different rooms that have a smart node assigned to it that has special sensors assigned to it. Every floor has a smart cluster which centrally connects and maintains different smart nodes. Every cluster has internet connectivity that connects to the backend server.
+</h5>
+
+
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Created By: Team 6</h1>
+</div>
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-64 w3-center w3-opacity">
+  <div class="w3-xlarge w3-padding-32">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+ </div>
+ <p>Powered by AWS</p>
+</footer>
+
+
+</body>
+</html>
+=
+ {% endif %}
+
+  {% endblock body %}
